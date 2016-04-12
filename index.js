@@ -21,7 +21,7 @@ if (!databaseUri) {
 var facebookAppIds = process.env.FACEBOOK_APP_IDS;
 
 if (facebookAppIds) {
-    facebookAppIds = facebookAppIds.split(",");
+  facebookAppIds = facebookAppIds.split(",");
 }
 
 var gcmId = process.env.GCM_ID;
@@ -53,7 +53,10 @@ if ((gcmId && gcmKey) || (productionPfx && productionBundleId) || (devBundleId &
   };
 }
 
-var serverURL = process.env.SERVER_URL || 'http://localhost:1337'; // Don't forget to change to https if needed
+var port = process.env.PORT || 1337;
+// Serve the Parse API on the /parse URL prefix
+var mountPath = process.env.PARSE_MOUNT || '/parse';
+var serverURL = process.env.SERVER_URL || 'http://localhost:' + port + mountPath; // Don't forget to change to https if needed
 
 var api = new ParseServer({
   databaseURI: databaseUri || 'mongodb://localhost:27017/dev',
@@ -95,8 +98,6 @@ if(process.env.TRUST_PROXY == 1) {
   app.enable('trust proxy');
 }
 
-// Serve the Parse API on the /parse URL prefix
-var mountPath = process.env.PARSE_MOUNT || '/parse';
 app.use(mountPath, api);
 
 // Parse Server plays nicely with the rest of your web routes
@@ -104,7 +105,6 @@ app.get('/', function(req, res) {
   res.status(200).send('I dream of being a web site.');
 });
 
-var port = process.env.PORT || 1337;
 app.listen(port, function() {
-    console.log('parse-server-example running on ' + serverURL + ' (:' + port + mountPath + ')');
+  console.log('parse-server-example running on ' + serverURL + ' (:' + port + mountPath + ')');
 });
